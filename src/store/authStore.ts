@@ -24,7 +24,6 @@ const customStorage: PersistStorage<PersistedState> = {
 	getItem: (name: string): StorageValue<PersistedState> | null => {
 		try {
 			const str = localStorage.getItem(name);
-			console.log(`[Persist] Getting item: ${name}`);
 			if (!str) return null;
 			return JSON.parse(str) as StorageValue<PersistedState>;
 		} catch (error) {
@@ -35,7 +34,6 @@ const customStorage: PersistStorage<PersistedState> = {
 	setItem: (name: string, value: StorageValue<PersistedState>): void => {
 		try {
 			localStorage.setItem(name, JSON.stringify(value));
-			console.log(`[Persist] SET item: ${JSON.stringify(value)}`);
 		} catch (error) {
 			console.error("Error setting item in localStorage:", error);
 		}

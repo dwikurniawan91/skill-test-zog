@@ -23,8 +23,6 @@ export const useLogin = () => {
 			return response.data;
 		},
 		onSuccess: (data) => {
-			console.log(data, "useMutation");
-
 			setAuth({
 				access_token: data.access_token,
 				refresh_token: data.refresh_token,
