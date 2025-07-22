@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { GoogleIcon } from "@/components/ui/googleIcon"
@@ -5,8 +6,30 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@radix-ui/react-label"
 import { Loader2Icon } from "lucide-react"
 import zogIcon from "@/assets/zog-icon.png"
+import { useForm } from "react-hook-form"
+import type { SubmitHandler } from "react-hook-form"
+import { z } from "zod"
+
+const schema = z.object({
+  email: z.email(),
+  password: z.string().min(8),
+})
+
+type FormFields = z.infer<typeof schema>
 
 export default function LoginPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormFields>({
+    resolver: zodResolver(schema),
+  })
+
+  const onSubmit: SubmitHandler<FormFields> = (data) => {
+    console.log(data)
+  }
+
   return (
     <div className="grid md:grid-cols-2 grid-cols-1 h-screen w-full">
       <div className="col-span-1 md:grid hidden place-items-center text-center text-white bg-brand-500 p-10">
@@ -34,14 +57,16 @@ export default function LoginPage() {
           <div className="text-gray-400 text-center">
             <p>-----------or Sign in with Email-----------</p>
           </div>
-          <form action="" className="flex flex-col gap-5">
+          <form action="" className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <Label htmlFor="email">Email</Label>
-              <Input type="email" id="email" placeholder="Email" />
+              <Input {...register("email")} type="email" id="email" placeholder="Email" />
+              {errors.email && <div className="text-danger text-[.875em]">{errors.email.message}</div>}
             </div>
             <div>
               <Label htmlFor="password">Password</Label>
-              <Input type="password" id="password" placeholder="Password" />
+              <Input {...register("password")} type="password" id="password" placeholder="Password" />
+              {errors.password && <div className="text-danger text-[.875em]">{errors.password.message}</div>}
               <div className="flex justify-between mt-1">
                 <div className="flex items-center gap-2">
                   <Checkbox id="remember" />
@@ -52,8 +77,8 @@ export default function LoginPage() {
                 <a href="/forgot-password">Forgot password?</a>
               </div>
             </div>
-            <Button className="w-full">
-              <Loader2Icon className="animate-spin" /> Login
+            <Button disabled={isSubmitting} type="submit" className="w-full">
+              {isSubmitting ? <Loader2Icon className="animate-spin" /> : "Login"}
             </Button>
           </form>
         </div>
