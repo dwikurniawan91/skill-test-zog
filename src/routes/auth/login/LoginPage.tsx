@@ -9,6 +9,10 @@ import zogIcon from "@/assets/zog-icon.png"
 import { useForm } from "react-hook-form"
 import type { SubmitHandler } from "react-hook-form"
 import { z } from "zod"
+import { useLogin } from "@/hooks/useMutation"
+import { useNavigate } from "react-router-dom"
+import type { APIErrorResponse } from "@/types/auth"
+import type { AxiosError } from "axios"
 
 const schema = z.object({
   email: z.email(),
@@ -18,16 +22,35 @@ const schema = z.object({
 type FormFields = z.infer<typeof schema>
 
 export default function LoginPage() {
+  const navigate = useNavigate() // Initialize useNavigate
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    setError,
+    formState: { errors },
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
   })
+  const { mutate: loginUser, isPending: isLoggingIn } = useLogin()
 
   const onSubmit: SubmitHandler<FormFields> = (data) => {
-    console.log(data)
+    loginUser(data, {
+      onSuccess: () => {
+        navigate("/")
+      },
+      onError: (error: AxiosError<APIErrorResponse>) => {
+        const errorMessage = error.response?.data?.message || "Login failed. Please try again."
+        setError(
+          "root.serverError",
+          {
+            type: "manual",
+            message: errorMessage,
+          },
+          { shouldFocus: true }
+        )
+      },
+    })
   }
 
   return (
@@ -77,9 +100,10 @@ export default function LoginPage() {
                 <a href="/forgot-password">Forgot password?</a>
               </div>
             </div>
-            <Button disabled={isSubmitting} type="submit" className="w-full">
-              {isSubmitting ? <Loader2Icon className="animate-spin" /> : "Login"}
+            <Button disabled={isLoggingIn} type="submit" className="w-full">
+              {isLoggingIn ? <Loader2Icon className="animate-spin" /> : "Login"}
             </Button>
+            {errors.root?.serverError && <p className="text-danger text-[.875em]">{errors.root.serverError.message}</p>}
           </form>
         </div>
         <div className="mt-auto">

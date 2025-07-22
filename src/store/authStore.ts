@@ -5,18 +5,20 @@ import type { User } from "../types/auth"
 
 interface AuthState {
   user: User | null
-  token: string | null // Token is stored in Zustand state and persisted
+  access_token: string | null // Token is stored in Zustand state and persisted
+  refresh_token: string | null // Token is stored in Zustand state and persisted
   isAuthenticated: boolean
-  setAuth: ({ user, token }: { user: User; token: string }) => void
+  setAuth: ({ access_token, refresh_token }: { access_token: string; refresh_token: string }) => void
   logout: () => void
 }
 
-type PersistedState = Pick<AuthState, "user" | "token">
+type PersistedState = Pick<AuthState, "access_token" | "refresh_token">
 
 const customStorage: PersistStorage<PersistedState> = {
   getItem: (name: string): StorageValue<PersistedState> | null => {
     try {
       const str = localStorage.getItem(name)
+      console.log(`[Persist] Getting item: ${name}`)
       if (!str) return null
       return JSON.parse(str) as StorageValue<PersistedState>
     } catch (error) {
@@ -27,6 +29,7 @@ const customStorage: PersistStorage<PersistedState> = {
   setItem: (name: string, value: StorageValue<PersistedState>): void => {
     try {
       localStorage.setItem(name, JSON.stringify(value))
+      console.log(`[Persist] SET item: ${JSON.stringify(value)}`)
     } catch (error) {
       console.error("Error setting item in localStorage:", error)
     }
@@ -40,25 +43,31 @@ const customStorage: PersistStorage<PersistedState> = {
   },
 }
 
+// src/store/authStore.ts
+// ...
 const useAuthStore = create<AuthState>()(
   devtools(
     persist(
       (set) => ({
         user: null,
-        token: null,
+        access_token: null,
+        refresh_token: null,
         isAuthenticated: false,
-        setAuth: ({ user, token }) => set({ user, token, isAuthenticated: !!token }),
-        logout: () => set({ user: null, token: null, isAuthenticated: false }),
+        setAuth: ({ access_token, refresh_token }) => {
+          set({ access_token, refresh_token, isAuthenticated: !!access_token })
+        },
+        logout: () => set({ access_token: null, refresh_token: null, isAuthenticated: false }),
       }),
       {
         name: "auth-storage",
         storage: customStorage,
-        partialize: (state) => ({
-          user: state.user,
-          token: state.token,
-        }),
+        partialize: (state) => {
+          const persistedState = { access_token: state.access_token, refresh_token: state.refresh_token, isAuthenticated: state.isAuthenticated }
+          return persistedState
+        },
       }
-    )
+    ),
+    { name: "AuthStore" }
   )
 )
 
