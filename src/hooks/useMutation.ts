@@ -38,3 +38,22 @@ export const useLogin = () => {
 		},
 	});
 };
+
+export const useLogout = () => {
+	const queryClient = useQueryClient();
+	const logout = useAuthStore((state) => state.logout);
+
+	return useMutation({
+		onSuccess: () => {
+			logout();
+			queryClient.clear();
+		},
+		onError: (error) => {
+			console.error(
+				"Logout error (local state cleared anyway):",
+				error.message,
+			);
+			logout(); // Always clear local state even if backend logout fails
+		},
+	});
+};
