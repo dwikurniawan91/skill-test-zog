@@ -6,19 +6,12 @@ import type { User } from "../types/auth";
 interface AuthState {
 	user: User | null;
 	access_token: string | null; // Token is stored in Zustand state and persisted
-	refresh_token: string | null; // Token is stored in Zustand state and persisted
 	isAuthenticated: boolean;
-	setAuth: ({
-		access_token,
-		refresh_token,
-	}: {
-		access_token: string;
-		refresh_token: string;
-	}) => void;
+	setAuth: ({ access_token }: { access_token: string }) => void;
 	logout: () => void;
 }
 
-type PersistedState = Pick<AuthState, "access_token" | "refresh_token">;
+type PersistedState = Pick<AuthState, "access_token">;
 
 const customStorage: PersistStorage<PersistedState> = {
 	getItem: (name: string): StorageValue<PersistedState> | null => {
@@ -57,13 +50,12 @@ const useAuthStore = create<AuthState>()(
 				access_token: null,
 				refresh_token: null,
 				isAuthenticated: false,
-				setAuth: ({ access_token, refresh_token }) => {
-					set({ access_token, refresh_token, isAuthenticated: !!access_token });
+				setAuth: ({ access_token }) => {
+					set({ access_token, isAuthenticated: !!access_token });
 				},
 				logout: () =>
 					set({
 						access_token: null,
-						refresh_token: null,
 						isAuthenticated: false,
 					}),
 			}),
@@ -73,7 +65,6 @@ const useAuthStore = create<AuthState>()(
 				partialize: (state) => {
 					const persistedState = {
 						access_token: state.access_token,
-						refresh_token: state.refresh_token,
 						isAuthenticated: state.isAuthenticated,
 					};
 					return persistedState;

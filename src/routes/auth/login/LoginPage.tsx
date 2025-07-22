@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { GoogleIcon } from "@/components/ui/googleIcon";
 import { Input } from "@/components/ui/input";
-import { useLogin } from "@/hooks/useMutation";
+import { useGoogleLogin, useLogin } from "@/hooks/useMutation";
+import useAuthStore from "@/store/authStore";
 import type { APIErrorResponse } from "@/types/auth";
 
 const schema = z.object({
@@ -33,6 +34,8 @@ export default function LoginPage() {
 		resolver: zodResolver(schema),
 	});
 	const { mutate: loginUser, isPending: isLoggingIn } = useLogin();
+	const { mutate: googleLogin, isPending: isGoogleLoginPending } =
+		useGoogleLogin();
 
 	const onSubmit: SubmitHandler<FormFields> = (data) => {
 		loginUser(data, {
@@ -52,6 +55,10 @@ export default function LoginPage() {
 				);
 			},
 		});
+	};
+
+	const handleGoogleLogin = () => {
+		googleLogin(); // Trigger the Google login mutation
 	};
 
 	return (
@@ -83,8 +90,19 @@ export default function LoginPage() {
 							See what is on your business
 						</p>
 					</div>
-					<Button variant="outline" className="w-full ">
-						<GoogleIcon /> Continue with Google
+					<Button
+						onClick={handleGoogleLogin}
+						disabled={isLoggingIn}
+						variant="outline"
+						className="w-full "
+					>
+						{isGoogleLoginPending ? (
+							<Loader2Icon className="animate-spin" />
+						) : (
+							<>
+								<GoogleIcon /> Continue with Google
+							</>
+						)}
 					</Button>
 					<div className="text-gray-400 text-center">
 						<p>-----------or Sign in with Email-----------</p>
