@@ -54,6 +54,14 @@ jobs:
         env:
           NODE_ENV: production # Ensure production build settings are used
 
+      - name: Cache Node modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Firebase Hosting
         if: github.ref == 'refs/heads/main' # Only deploy on pushes to main branch
         uses: FirebaseExtended/action-hosting-deploy@v0 # Or preferred deployment action
@@ -61,6 +69,6 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}' # GitHub's default token for repository access
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ZOG_TEST }}' # Firebase Service Account JSON
           channelId: live # Deploy to the 'live' channel  main site)
-          projectId: ${{ secrets.FIREBASE_PROJECT_ID }} # Use the same project ID as config
+          projectId: zog-test # Use the same project ID as config
           target: zog-test.web.app
 
