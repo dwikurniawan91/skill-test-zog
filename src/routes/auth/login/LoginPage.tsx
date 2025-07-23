@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@radix-ui/react-label";
 import type { AxiosError } from "axios";
 import { Loader2Icon } from "lucide-react";
+import { useEffect } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +18,7 @@ import type { APIErrorResponse } from "@/types/auth";
 
 const schema = z.object({
 	email: z.email(),
-	password: z.string().min(8),
+	password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 type FormFields = z.infer<typeof schema>;
@@ -33,15 +34,14 @@ export default function LoginPage() {
 	} = useForm<FormFields>({
 		resolver: zodResolver(schema),
 	});
-	const { mutate: loginUser, isPending: isLoggingIn } = useLogin();
+	const { mutate: loginUser, isPending: isLoginPending } = useLogin();
 	const { mutate: googleLogin, isPending: isGoogleLoginPending } =
 		useGoogleLogin();
+	const { isAuthenticated } = useAuthStore();
 
 	const onSubmit: SubmitHandler<FormFields> = (data) => {
 		loginUser(data, {
-			onSuccess: () => {
-				navigate("/");
-			},
+			onSuccess: () => {},
 			onError: (error: AxiosError<APIErrorResponse>) => {
 				const errorMessage =
 					error.response?.data?.message || "Login failed. Please try again.";
@@ -56,6 +56,12 @@ export default function LoginPage() {
 			},
 		});
 	};
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			navigate("/", { replace: true });
+		}
+	}, [isAuthenticated, navigate]);
 
 	const handleGoogleLogin = () => {
 		googleLogin(); // Trigger the Google login mutation
@@ -92,12 +98,15 @@ export default function LoginPage() {
 					</div>
 					<Button
 						onClick={handleGoogleLogin}
-						disabled={isLoggingIn}
+						disabled={isGoogleLoginPending}
 						variant="outline"
-						className="w-full "
+						className="w-full"
 					>
 						{isGoogleLoginPending ? (
-							<Loader2Icon className="animate-spin" />
+							<>
+								<Loader2Icon className="animate-spin" />
+								<span className="sr-only">Continue with Google</span>
+							</>
 						) : (
 							<>
 								<GoogleIcon /> Continue with Google
@@ -149,8 +158,15 @@ export default function LoginPage() {
 								<a href="/forgot-password">Forgot password?</a>
 							</div>
 						</div>
-						<Button disabled={isLoggingIn} type="submit" className="w-full">
-							{isLoggingIn ? <Loader2Icon className="animate-spin" /> : "Login"}
+						<Button disabled={isLoginPending} type="submit" className="w-full">
+							{isLoginPending ? (
+								<>
+									<Loader2Icon className="animate-spin" />
+									<span className="sr-only">Login</span>
+								</>
+							) : (
+								<span>Login</span>
+							)}
 						</Button>
 						{errors.root?.serverError && (
 							<p className="text-danger text-[.875em]">
