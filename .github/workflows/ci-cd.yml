@@ -1,0 +1,74 @@
+name: skill-test-zog
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Action to checkout repository code
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4 # Action to set up Node.js environment
+        with:
+          node-version: '20' # Specify Node.js version
+
+      - name: Install dependencies
+        run: npm ci # Use npm ci for clean installs in CI environments
+
+      - name: 🧪 Run Unit Tests
+        run: npm test # Command to run unit tests (configured with Vitest)
+        env:
+          # Pass required env variables for tests if they rely on them
+          # For most unit tests, Firebase config might not be strictly needed,
+          # but if you have integration tests or mock setup relying on it, include them.
+          # Example for Vitest:
+          VITE_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL_STAGING }}
+
+      - name: 📦 Build Project
+        run: |
+          # Expose GitHub secrets as VITE_ prefixed environment variables for Vite build
+          # Vite will pick these up from process.env during the build step.
+          VITE_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }} \
+          VITE_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }} \
+          VITE_FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} \
+          VITE_FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }} \
+          VITE_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }} \
+          VITE_FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }} \
+          VITE_API_URL=${{ secrets.VITE_API_URL_PRODUCTION }} \
+          npm run build
+        env:
+          NODE_ENV: production # Ensure production build settings are used
+
+      - name: Cache Node modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Firebase Hosting
+        if: github.ref == 'refs/heads/main' # Only deploy on pushes to main branch
+        uses: FirebaseExtended/action-hosting-deploy@v0 # Or preferred deployment action
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}' # GitHub's default token for repository access
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TEST_FE }}' # Firebase Service Account JSON
+          channelId: live # Deploy to the 'live' channel  main site)
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }} # Use the same project ID as config
+          target: zog-test.web.app
+
