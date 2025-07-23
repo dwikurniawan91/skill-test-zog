@@ -1,69 +1,160 @@
-# React + TypeScript + Vite
+# ZOG Test - Login/Auth
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- ⚡️ Develop using `Vite`
+- 🛠 TypeScript support
+- 🎨 `ShadCn` components
+- 📝 Form validation with `Zod`
+- 🔐 Authentication system
+- 🧪 Unit testing with `Vitest`
+- 🧭 End-to-end testing with `Playwright`
+- ✨ Code formatting & linting with `Biome`
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📋 Prerequisites
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- `Node.js 18+`
+- `npm 9+` or `yarn 1.22+`
+- `Git`
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🛠️ Installation
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/your-repo.git
+cd your-repo
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Install dependencies
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+npm install
+# or
+yarn install
+```
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 🖥️ Development
+
+Start the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+---
+
+## 🏗️ Building for Production
+
+```bash
+npm run build
+# or
+yarn build
+```
+
+The build artifacts will be stored in the `dist/` directory.
+
+---
+
+## 👀 Preview Production Build
+
+```bash
+npm run preview
+# or
+yarn preview
+```
+
+---
+
+## 🧪 Testing
+
+### Unit Tests
+
+Run unit tests:
+
+```bash
+npm run test
+# or
+yarn test
+```
+
+Watch mode:
+
+```bash
+npm run test:watch
+# or
+yarn test:watch
+```
+
+### End-to-End Tests (Playwright)
+
+Run Playwright tests:
+
+```bash
+npm run e2e
+# or
+yarn e2e
+```
+
+Interactive UI mode:
+
+```bash
+npm run e2e:ui
+# or
+yarn e2e:ui
+```
+
+Debug mode:
+
+```bash
+npm run e2e:debug
+# or
+yarn e2e:debug
+```
+
+---
+
+## 📝 Linting & Formatting
+
+Check for linting errors:
+
+```bash
+npm run lint
+# or
+yarn lint
+```
+
+Fix linting errors automatically:
+
+```bash
+npm run lint:fix
+# or
+yarn lint:fix
+```
+
+---
+
+## 🔧 Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+VITE_API_BASE_URL=..
+VITE_FIREBASE_API_KEY=..
+VITE_FIREBASE_AUTH_DOMAIN=..
+VITE_FIREBASE_PROJECT_ID=..
+VITE_FIREBASE_STORAGE_BUCKET=..
+VITE_FIREBASE_MESSAGING_SENDER_ID=..
+VITE_FIREBASE_APP_ID=..
 ```
