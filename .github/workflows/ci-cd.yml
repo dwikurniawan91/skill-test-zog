@@ -62,7 +62,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: 🚀 Deploy to Hosting Provider (Example: Firebase Hosting)
+      - name: Firebase Hosting
         if: github.ref == 'refs/heads/main' # Only deploy on pushes to main branch
         uses: FirebaseExtended/action-hosting-deploy@v0 # Or preferred deployment action
         with:
@@ -70,4 +70,5 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TEST_FE }}' # Firebase Service Account JSON
           channelId: live # Deploy to the 'live' channel  main site)
           projectId: ${{ secrets.FIREBASE_PROJECT_ID }} # Use the same project ID as config
-          target: skill-test-zog # Replace with actual Firebase Hosting target if you have one
+          target: zog-test.web.app
+
