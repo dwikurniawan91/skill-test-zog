@@ -16,7 +16,7 @@ export default defineConfig(() =>
 				"packages/template/*",
 				"**/node_modules/**",
 				"**/dist/**",
-				"**/cypress/**",
+				"**/playwright/**",
 				"**/.cache/**",
 				"**/.git/**",
 			],

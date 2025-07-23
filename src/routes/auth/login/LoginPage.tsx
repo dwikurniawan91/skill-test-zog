@@ -17,7 +17,7 @@ import useAuthStore from "@/store/authStore";
 import type { APIErrorResponse } from "@/types/auth";
 
 const schema = z.object({
-	email: z.email(),
+	email: z.email("invalid email"),
 	password: z.string().min(8, "Password must contain at least 8 characters"),
 });
 
@@ -105,7 +105,7 @@ export default function LoginPage() {
 						{isGoogleLoginPending ? (
 							<>
 								<Loader2Icon className="animate-spin" />
-								<span className="sr-only">Continue with Google</span>
+								<span>Continue with Google</span>
 							</>
 						) : (
 							<>
@@ -162,7 +162,7 @@ export default function LoginPage() {
 							{isLoginPending ? (
 								<>
 									<Loader2Icon className="animate-spin" />
-									<span className="sr-only">Login</span>
+									<span>Login</span>
 								</>
 							) : (
 								<span>Login</span>
