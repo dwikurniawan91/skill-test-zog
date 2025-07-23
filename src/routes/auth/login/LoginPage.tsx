@@ -83,7 +83,7 @@ export default function LoginPage() {
 					<p>John Doe, CEO, Company Name</p>
 				</div>
 			</div>
-			<div className="col-span-1 grid place-items-center p-20 ">
+			<div className="col-span-1 grid place-items-center p-6 md:p18 ">
 				<div className="flex flex-col gap-6 w-full min-w-[300px] max-w-[500px]">
 					<div className="flex flex-col gap-1">
 						<div className="mb-2">
