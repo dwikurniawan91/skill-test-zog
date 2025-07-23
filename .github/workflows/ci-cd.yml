@@ -67,7 +67,7 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0 # Or preferred deployment action
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}' # GitHub's default token for repository access
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TEST_FE }}' # Firebase Service Account JSON
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ZOG_TEST }}' # Firebase Service Account JSON
           channelId: live # Deploy to the 'live' channel  main site)
           projectId: ${{ secrets.FIREBASE_PROJECT_ID }} # Use the same project ID as config
           target: zog-test.web.app
