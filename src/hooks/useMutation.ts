@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { signInWithPopup, type UserCredential } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import api from "@/api/axios";
 import { auth, googleProvider } from "@/api/firebase";
 import useAuthStore from "@/store/authStore";
 import type {
@@ -10,6 +9,7 @@ import type {
 	AuthResponse,
 	LoginCredentials,
 } from "@/types/auth";
+import api from "../api/axios";
 
 export const useLogin = () => {
 	const queryClient = useQueryClient();
